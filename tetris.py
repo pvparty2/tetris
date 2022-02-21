@@ -1,7 +1,7 @@
 '''
     Re-create the Tetris game using print statements.
     The game will need all the shapes.
-    The game will need a space to hold the current board, i.e. frame.
+    The game will need a space to hold the current board, i.e. frame. DONE
     The shapes will need to appear on screen.
     The shapes will need to move down every second.
     The shapes will need to stop once touching another shape on the current board.
@@ -29,5 +29,19 @@ class Frame:
         return s
 
 
-
+class Block:
+    '''
+        This class represents the current block.
+        The current block can be one of seven blocks: 
+            I, O, S, Z, J, L, T.
+    '''
+    blocks = {
+        'iblock': [['#']] * 4,
+        'oblock': [['#', '#']] * 2,
+        'sblock': [[' ', '#', '#'], ['#', '#', ' ']],
+        'zblock': [['#', '#', ' '], [' ', '#', '#']],
+        'jblock': [[' ', '#']] * 3 + [['#', '#']],
+        'lblock': [['#', ' ']] * 3 + [['#', '#']],
+        'tblock': [['#', '#', '#'], [' ', '#', ' ']]
+    }
 
