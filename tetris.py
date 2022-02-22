@@ -18,7 +18,12 @@ class Frame:
         '''Initialize a Frame with set width and height.'''
         self._width = 15
         self._height = 20
-        self.frame = [list(' ' * self._width)] * self._height # Create an empty frame
+        self._center = self._width // 2
+        
+        # Create an empty frame
+        self.frame = []
+        for i in range(self._height):
+            self.frame.append(list(' ' * self._width)) 
 
     
     def __str__(self):
@@ -29,19 +34,19 @@ class Frame:
         return s
 
 
-class Block:
-    '''
-        This class represents the current block.
-        The current block can be one of seven blocks: 
-            I, O, S, Z, J, L, T.
-    '''
-    blocks = {
-        'iblock': [['#']] * 4,
-        'oblock': [['#', '#']] * 2,
-        'sblock': [[' ', '#', '#'], ['#', '#', ' ']],
-        'zblock': [['#', '#', ' '], [' ', '#', '#']],
-        'jblock': [[' ', '#']] * 3 + [['#', '#']],
-        'lblock': [['#', ' ']] * 3 + [['#', '#']],
-        'tblock': [['#', '#', '#'], [' ', '#', ' ']]
-    }
-
+    def __add__(self, other):
+        '''Add the pixels of the frame to the pixels of the block.
+           If both empty pixels, then empty pixel.
+           If one empty and one non-empty pixel, then non-empty pixel.
+           If both non-empty pixels, then non-empty pixel.
+        '''
+        new_frame = []
+        for i in range(self._height):
+            new_row = []
+            for j in range(self._width):
+                if not self.frame[i][j] == ' ':
+                    new_row.append(self.frame[i][j])
+                else:
+                    new_row.append(other.frame[i][j]) 
+            new_frame.append(new_row)
+        return new_frame
