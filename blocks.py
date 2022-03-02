@@ -1,3 +1,4 @@
+from tetris import Frame
 # Create 1 class for each block object.
 class Block:
     '''
@@ -15,10 +16,15 @@ blocks = {
     'tblock': [['#', '#', '#'], [' ', '#', ' ']]
 }
 
-class Iblock:
+class Iblock(Frame):
     '''This class represent the i-block.'''
     def __init__(self):
-        self.pixels = blocks['iblock']
+        Frame.__init__(self)
+        # Construct the I-block
+        for i in range(4):
+            self.frame[i][self._center] = '#'
+        
+
 
 # The i-block needs to appear on the current frame.
 # The i-block needs to appear in the center of the current frame.

@@ -20,10 +20,11 @@ class Frame:
         self._height = 20
         self._center = self._width // 2
         
-        # Create an empty frame
+        # Create an empty width x height frame
         self.frame = []
+        self.empty_pixel = '_'
         for i in range(self._height):
-            self.frame.append(list(' ' * self._width)) 
+            self.frame.append(list(self.empty_pixel * self._width)) 
 
     
     def __str__(self):
@@ -38,13 +39,13 @@ class Frame:
         '''Add the pixels of the frame to the pixels of the block.
            If both empty pixels, then empty pixel.
            If one empty and one non-empty pixel, then non-empty pixel.
-           If both non-empty pixels, then non-empty pixel.
+           If both non-empty pixels, then non-empty pixel from self.
         '''
         new_frame = []
         for i in range(self._height):
             new_row = []
             for j in range(self._width):
-                if not self.frame[i][j] == ' ':
+                if not self.frame[i][j] == self.empty_pixel:
                     new_row.append(self.frame[i][j])
                 else:
                     new_row.append(other.frame[i][j]) 
