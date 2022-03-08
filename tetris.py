@@ -1,3 +1,5 @@
+import time
+
 '''
     Re-create the Tetris game using print statements.
     The game will need all the shapes.
@@ -30,8 +32,11 @@ class Frame:
     def __str__(self):
         '''Make the frame print prettily to the screen.'''
         s = ''
-        for line in self.frame:
-            s = s + ''.join(line) + '\n'
+        for i in range(len(self.frame)):
+            if i == (len(self.frame) - 1):
+                s = s + ''.join(self.frame[i])
+            else:
+                s = '\r' + s + ''.join(self.frame[i]) + '\n'
         return s
 
 
@@ -51,3 +56,28 @@ class Frame:
                     new_row.append(other.frame[i][j]) 
             new_frame.append(new_row)
         return new_frame
+
+
+import os
+class Iblock(Frame):
+    '''This class represent the i-block.'''
+    def __init__(self):
+        Frame.__init__(self)
+        # Construct the I-block
+        for i in range(4):
+            self.frame[i][self._center] = '#'
+game = Frame()
+game.frame = game + Iblock()
+for i in range(30):
+    os.system('cls')
+    print(game)
+    time.sleep(1)
+    for i in range(game._height):
+        i = game._height - 1 - i # start on last row
+        if i == (game._height - 1):
+            continue
+        for j in range(game._width):
+            if not game.frame[i][j] == '_':
+                game.frame[i+1][j] = game.frame[i][j]
+                game.frame[i][j] = '_'
+

@@ -23,6 +23,15 @@ class Iblock(Frame):
         # Construct the I-block
         for i in range(4):
             self.frame[i][self._center] = '#'
+
+class Oblock(Frame):
+    '''This class represent the i-block.'''
+    def __init__(self):
+        Frame.__init__(self)
+        # Construct the I-block
+        for i in range(2):
+            self.frame[i][self._center] = '#'
+            self.frame[i][self._center+1] = '#'
         
 
 
