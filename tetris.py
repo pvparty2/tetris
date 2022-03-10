@@ -10,6 +10,22 @@ import time
     The game will need to take in player inputs: right and left and down.
 '''
 
+
+class Pixel:
+    '''
+        This class is supposed to model exactly 1 Pixel on the Tetris board. 
+        It is either on or off.
+        The pixel is either decreasing or stationary.
+        The pixel has x and y coordinates for a given frame.
+    '''
+    def __init__(self, x=0, y=0, decreasing=False, on=False):
+        '''Initialize a Pixel with (x, y) coordinates, a 'decreasing' and 'on' Boolean variables.'''
+        self.x = x
+        self.y = y
+        self.decreasing = decreasing
+        self.on = on
+
+
 class Frame:
     '''
         This class holds the current frame. 
