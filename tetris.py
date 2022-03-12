@@ -1,4 +1,4 @@
-import time
+import time, os
 
 '''
     Re-create the Tetris game using print statements.
@@ -19,11 +19,40 @@ class Pixel:
         The pixel has x and y coordinates for a given frame.
     '''
     def __init__(self, x=0, y=0, decreasing=False, on=False):
-        '''Initialize a Pixel with (x, y) coordinates, a 'decreasing' and 'on' Boolean variables.'''
+        '''Initialize a Pixel with (x, y) coordinates, a 'decreasing' and 'is_on' Boolean variables.'''
         self.x = x
         self.y = y
         self.decreasing = decreasing
         self.on = on
+    
+
+    def __repr__(self):
+        '''
+            Function that returns the value of a pixel.
+            We need this to populate the gaming board.'''
+        if self.on:
+            return '#'
+        return '_'
+
+    
+    def move(self):
+        '''
+            This function moves a pixel down the gaming board.
+            The y coordinate of a pixel decreases by 1.
+            This function returns None.'''
+        self.y -= 1
+        return None
+
+    
+    def __add__(self, other):
+        '''
+            Add 2 Pixels.
+            The add operator will override the self Pixel with the other Pixel
+            if the self Pixel is not on.'''
+        if self.on:
+            return self
+        self.on = True
+        return other
 
 
 class Frame:
@@ -32,49 +61,47 @@ class Frame:
         This frame will be printed to the screen.
         This frame must be updated every second.
     '''
-    def __init__(self):
+    def __init__(self, width=15, height=20):
         '''Initialize a Frame with set width and height.'''
-        self._width = 15
-        self._height = 20
+        self._width = width
+        self._height = height
         self._center = self._width // 2
-        
-        # Create an empty width x height frame
+
+        # Create an empty width by height frame.
+        # We want to do this only once upon initialization.
         self.frame = []
-        self.empty_pixel = '_'
         for i in range(self._height):
-            self.frame.append(list(self.empty_pixel * self._width)) 
+            self.frame.append([])
+            for j in range(self._width):
+                self.frame[i].append(Pixel(x=j, y=i))
 
     
-    def __str__(self):
-        '''Make the frame print prettily to the screen.'''
+    def __repr__(self):
+        '''
+            Make the frame print prettily to the screen.'''
         s = ''
-        for i in range(len(self.frame)):
-            if i == (len(self.frame) - 1):
-                s = s + ''.join(self.frame[i])
-            else:
-                s = '\r' + s + ''.join(self.frame[i]) + '\n'
+        for i in range(self._height):
+            for j in range(self._width):
+                s += str(self.frame[i][j])
+            s += '\n'
         return s
 
 
     def __add__(self, other):
-        '''Add the pixels of the frame to the pixels of the block.
-           If both empty pixels, then empty pixel.
-           If one empty and one non-empty pixel, then non-empty pixel.
-           If both non-empty pixels, then non-empty pixel from self.
         '''
-        new_frame = []
+            Add the pixels of 2 frames, with equal width and height.
+            If both pixels not on, then not on pixel.
+            If self has a not on pixel, but other has a on pixel, then override the self pixel.
+            If both not on pixels, then self remains not on.'''
         for i in range(self._height):
-            new_row = []
             for j in range(self._width):
-                if not self.frame[i][j] == self.empty_pixel:
-                    new_row.append(self.frame[i][j])
-                else:
-                    new_row.append(other.frame[i][j]) 
-            new_frame.append(new_row)
-        return new_frame
+                # if the pixel in the other object is on, then assign to self.
+                thepixel = other.frame[i][j]
+                if thepixel.on:
+                    self.frame[i][j] = thepixel
+        return self
 
 
-import os
 class Iblock(Frame):
     '''This class represent the i-block.'''
     def __init__(self):
