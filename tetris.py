@@ -24,6 +24,7 @@ class Pixel:
         self.y = y
         self.descending = descending
         self.on = on
+        self.coordinates = (x, y)
     
 
     def __repr__(self):
@@ -113,6 +114,7 @@ class Frame:
                     return True
         return False
 
+
 class Iblock(Frame):
     '''This class represent the i-block.'''
     def __init__(self):
@@ -128,16 +130,30 @@ class Iblock(Frame):
 
 game = Frame()
 game + Iblock()
-for i in range(30):
+for c in range(30):
     os.system('cls')
     print(game)
-    time.sleep(1)
-    for i in range(game._height):
-        i = game._height - 1 - i # start on last row
-        if i == (game._height - 1):
-            continue
-        for j in range(game._width):
-            if not game.frame[i][j] == '_':
-                game.frame[i+1][j] = game.frame[i][j]
-                game.frame[i][j] = '_'
-
+    time.sleep(0.25)
+    # What do we want to do?
+    # The Iblock should descend down the frame.
+    # It will descend if each pixel within the Iblock is descending.
+    # A pixel is not descending on two ocassions:
+    # 1. If it is not all the way at the bottom of a frame.
+    # 2. If there is another pixel directly below it that meets 2 conditions:
+    #   a. It is on, and
+    #   b. It is not descending.
+    for i in range(game._height-1, -1, -1): # work from the bottom to the top
+        for j in range(game._width-1, -1, -1): # work from right to left
+            thepixel = game.frame[i][j]
+            if not thepixel.on:
+                # skip pixels that are not on
+                continue
+            if thepixel.y == game._height-1:
+                # if the pixel is all the way at the bottom of the screen, it should not be descending.
+                thepixel.descending = False
+            elif (game.frame[i+1][j].on and not game.frame[i+1][j].descending):
+                # if there is another pixel directly below: that is on and not descending, thepixel should not be descending
+                thepixel.descending = False
+            else:
+                game.frame[i][j].on = False
+                game.frame[i+1][j].on = True
