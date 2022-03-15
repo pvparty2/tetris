@@ -18,11 +18,11 @@ class Pixel:
         The pixel is either decreasing or stationary.
         The pixel has x and y coordinates for a given frame.
     '''
-    def __init__(self, x=0, y=0, decreasing=False, on=False):
+    def __init__(self, x=0, y=0, descending=False, on=False):
         '''Initialize a Pixel with (x, y) coordinates, a 'decreasing' and 'is_on' Boolean variables.'''
         self.x = x
         self.y = y
-        self.decreasing = decreasing
+        self.descending = descending
         self.on = on
     
 
@@ -101,16 +101,33 @@ class Frame:
                     self.frame[i][j] = thepixel
         return self
 
+    
+    def descending(self):
+        '''
+            If at least one pixel in a frame is descending, then descending() returns True.
+            Otherwise, returns False to say that none of them are descending.'''
+        for i in range(self._height):
+            for j in range(self._width):
+                thepixel = self.frame[i][j]
+                if thepixel.descending:
+                    return True
+        return False
 
 class Iblock(Frame):
     '''This class represent the i-block.'''
     def __init__(self):
         Frame.__init__(self)
         # Construct the I-block
-        for i in range(4):
-            self.frame[i][self._center] = '#'
+        self.coordinates = ((0, self._center),
+                            (1, self._center),
+                            (2, self._center),
+                            (3, self._center))
+        for i, j in self.coordinates:
+            self.frame[i][j] = Pixel(x=j, y=i, on=True)
+
+
 game = Frame()
-game.frame = game + Iblock()
+game + Iblock()
 for i in range(30):
     os.system('cls')
     print(game)
