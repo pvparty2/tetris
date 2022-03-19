@@ -19,7 +19,7 @@ class Pixel:
         The pixel has x and y coordinates for a given frame.
     '''
     def __init__(self, x=0, y=0, descending=False, on=False):
-        '''Initialize a Pixel with (x, y) coordinates, a 'decreasing' and 'is_on' Boolean variables.'''
+        '''Initialize a Pixel with (x, y) coordinates, a 'decreasing' and 'on' Boolean variables.'''
         self.x = x
         self.y = y
         self.descending = descending
@@ -102,17 +102,49 @@ class Frame:
                     self.frame[i][j] = thepixel
         return self
 
+
+    def get_pixel(self, x, y):
+        '''
+            Function returns a pixel at coordinates (x, y).
+            x is the value along the width of the frame.
+            y is the value along the height of the frame.'''
+        try:
+            return self.frame[y][x]
+        except IndexError:
+            return None# f'Pixel({x}, {y}) is not inside the domain of the frame.'
+
     
-    def descending(self):
+    def descend(self):
         '''
             If at least one pixel in a frame is descending, then descending() returns True.
             Otherwise, returns False to say that none of them are descending.'''
-        for i in range(self._height):
-            for j in range(self._width):
-                thepixel = self.frame[i][j]
-                if thepixel.descending:
-                    return True
-        return False
+        for i in range(self._height-1, -1, -1):
+            for j in range(self._width-1, -1, -1):
+                '''
+                    A pixel is not descending on two ocassions:
+                    # 1. If it is not all the way at the bottom of a frame.
+                    # 2. If there is another pixel directly below it that meets 2 conditions:
+                    #   a. It is on, and
+                    #   b. It is not descending.'''
+                thepixel = self.get_pixel(j, i)
+                if not thepixel.on:
+                    # skip pixels that are not on
+                    continue
+
+                otherpixel = self.get_pixel(j, i+1)
+                if not otherpixel:
+                    # if otherpixel does not exist, then thepixel is all the way at the bottom of the screen
+                    # therefore, thepixel should not be descending
+                    thepixel.descending = False
+                    continue
+
+                if (otherpixel.on and not otherpixel.descending):
+                    # if there is another pixel directly below: that is on and not descending, thepixel should not be descending
+                    thepixel.descending = False
+                else:
+                    # else descend the pixel
+                    thepixel.on = False
+                    otherpixel.on = True
 
 
 class Iblock(Frame):
@@ -134,26 +166,4 @@ for c in range(30):
     os.system('cls')
     print(game)
     time.sleep(0.25)
-    # What do we want to do?
-    # The Iblock should descend down the frame.
-    # It will descend if each pixel within the Iblock is descending.
-    # A pixel is not descending on two ocassions:
-    # 1. If it is not all the way at the bottom of a frame.
-    # 2. If there is another pixel directly below it that meets 2 conditions:
-    #   a. It is on, and
-    #   b. It is not descending.
-    for i in range(game._height-1, -1, -1): # work from the bottom to the top
-        for j in range(game._width-1, -1, -1): # work from right to left
-            thepixel = game.frame[i][j]
-            if not thepixel.on:
-                # skip pixels that are not on
-                continue
-            if thepixel.y == game._height-1:
-                # if the pixel is all the way at the bottom of the screen, it should not be descending.
-                thepixel.descending = False
-            elif (game.frame[i+1][j].on and not game.frame[i+1][j].descending):
-                # if there is another pixel directly below: that is on and not descending, thepixel should not be descending
-                thepixel.descending = False
-            else:
-                game.frame[i][j].on = False
-                game.frame[i+1][j].on = True
+    game.descend()
