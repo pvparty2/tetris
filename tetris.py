@@ -1,4 +1,5 @@
 import time, os
+from threading import Thread
 
 '''
     Re-create the Tetris game using print statements.
@@ -114,18 +115,28 @@ class Frame:
             return None# f'Pixel({x}, {y}) is not inside the domain of the frame.'
 
     
-    def descend(self):
+    def descending(self):
         '''
-            If at least one pixel in a frame is descending, then descending() returns True.
-            Otherwise, returns False to say that none of them are descending.'''
+            Returns True if at least one pixel in the frame is descending.'''
         for i in range(self._height-1, -1, -1):
             for j in range(self._width-1, -1, -1):
-                '''
-                    A pixel is not descending on two ocassions:
-                    # 1. If it is not all the way at the bottom of a frame.
-                    # 2. If there is another pixel directly below it that meets 2 conditions:
-                    #   a. It is on, and
-                    #   b. It is not descending.'''
+                thepixel = self.get_pixel(j, i)
+                if thepixel.descending:
+                    return True
+        return False
+
+
+    def descend(self):
+        '''
+            Descends pixels down the length of the frame.
+            A pixel is not descending on two occasions:
+            1. If it is not all the way at the bottom of a frame.
+            2. If there is another pixel directly below it that meets 2 conditions:
+              a. It is on, and
+              b. It is not descending.'''
+        # look at each pixel from bottom right corner
+        for i in range(self._height-1, -1, -1):
+            for j in range(self._width-1, -1, -1):
                 thepixel = self.get_pixel(j, i)
                 if not thepixel.on:
                     # skip pixels that are not on
@@ -144,7 +155,21 @@ class Frame:
                 else:
                     # else descend the pixel
                     thepixel.on = False
+                    thepixel.descending = False
                     otherpixel.on = True
+                    otherpixel.descending = True
+
+
+    def move_right(self):
+        for i in range(self._height-1, -1, -1):
+            for j in range(self._width-1, -1, -1):
+                thepixel = self.get_pixel(j, i)
+                if thepixel.descending and thepixel.x < (self._width-1):
+                    otherpixel = self.get_pixel(j+1, i)
+                    thepixel.on = False
+                    thepixel.descending = False
+                    otherpixel.on = True
+                    otherpixel.descending = True
 
 
 class Iblock(Frame):
@@ -157,13 +182,25 @@ class Iblock(Frame):
                             (2, self._center),
                             (3, self._center))
         for i, j in self.coordinates:
-            self.frame[i][j] = Pixel(x=j, y=i, on=True)
+            self.frame[i][j] = Pixel(x=j, y=i, on=True, descending=True)
 
 
 game = Frame()
 game + Iblock()
-for c in range(30):
+def movement():
+    while True:
+        x = input()
+        if x.lower() == 'd':
+            game.move_right()
+
+
+Thread(target=movement).start()
+
+for c in range(35):
     os.system('cls')
     print(game)
-    time.sleep(0.25)
-    game.descend()
+    time.sleep(0.5)
+    if game.descending():
+        game.descend()
+    else:
+        game + Iblock()
