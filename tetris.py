@@ -161,10 +161,13 @@ class Frame:
 
 
     def move_right(self):
+        '''
+            Move each pixel that is descending 1 unit to the right.'''
+        step = 1
         for i in range(self._height-1, -1, -1):
             for j in range(self._width-1, -1, -1):
                 thepixel = self.get_pixel(j, i)
-                if thepixel.descending and thepixel.x < (self._width-1):
+                if thepixel.descending and (thepixel.x+step) < (self._width):
                     otherpixel = self.get_pixel(j+1, i)
                     thepixel.on = False
                     thepixel.descending = False
@@ -187,6 +190,7 @@ class Iblock(Frame):
 
 game = Frame()
 game + Iblock()
+
 def movement():
     while True:
         x = input()
